@@ -16,6 +16,7 @@ object Plugin extends sbt.Plugin {
   val updateBrowsers = taskKey[Unit]("Partially resets some of the stuff in the browser")
   val spliceBrowsers = taskKey[Unit]("Attempts to do a live update of the code running in the browser while maintaining state")
   val localUrl = settingKey[(String, Int)]("localUrl")
+  val routing = settingKey[Routing]("route")
   private[this] val server = settingKey[Server]("local websocket server")
 
 
@@ -95,7 +96,8 @@ object Plugin extends sbt.Plugin {
         }
       }
     },
-    server := new Server(localUrl.value._1, localUrl.value._2, bootSnippet.value),
+    routing := DefaultRouting,
+    server := new Server(localUrl.value._1, localUrl.value._2, bootSnippet.value, routing.value),
     (onUnload in Global) := { (onUnload in Global).value.compose{ state =>
       server.value.kill()
       state

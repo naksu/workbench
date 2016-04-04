@@ -27,7 +27,7 @@ import scala.tools.nsc.typechecker.Analyzer
 import org.scalajs.core.tools.classpath.{CompleteClasspath, PartialClasspath}
 import scala.tools.nsc.util.{JavaClassPath, DirectoryClassPath}
 
-class Server(url: String, port: Int, bootSnippet: String) extends SimpleRoutingApp{
+class Server(url: String, port: Int, bootSnippet: String, routing: Routing) extends SimpleRoutingApp{
   implicit val system = ActorSystem(
     "Workbench-System",
     config = ConfigFactory.load(ActorSystem.getClass.getClassLoader),
@@ -111,7 +111,7 @@ class Server(url: String, port: Int, bootSnippet: String) extends SimpleRoutingA
           """
         }
       } ~
-      getFromDirectory(".")
+      routing.route(this)
 
     } ~
     post {
